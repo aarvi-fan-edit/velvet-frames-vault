@@ -47,7 +47,7 @@ export function SiteHeader() {
           ))}
           <Link
             to="/archive"
-            search={{ q: "" }}
+            hash="search"
             className="flex items-center gap-2 eyebrow transition-colors hover:text-foreground"
             aria-label="Search the archive"
           >
