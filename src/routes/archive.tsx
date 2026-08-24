@@ -55,29 +55,26 @@ function ArchivePage() {
 
   return (
     <div className="min-h-screen">
-      <SiteHeader />
+      <SiteHeader solid />
 
       <section className="px-6 pt-36 md:px-12 md:pt-48">
-        <div className="mx-auto max-w-[1600px]">
-          <p className="eyebrow animate-fade">{photos.length} photographs catalogued</p>
-          <h1 className="display animate-rise mt-5 text-[clamp(3rem,10vw,8rem)]">Archive</h1>
+        <div className="mx-auto max-w-[1800px]">
+          <h1 className="display animate-rise text-[clamp(3rem,10vw,8rem)]">Archive</h1>
         </div>
 
         {/* Filters + search */}
         <div
           id="search"
-          className="mx-auto mt-16 flex max-w-[1600px] flex-col gap-8 border-y border-border py-6 lg:flex-row lg:items-center lg:justify-between"
+          className="mx-auto mt-12 flex max-w-[1800px] flex-col gap-6 border-b border-border pb-5 lg:flex-row lg:items-center lg:justify-between"
         >
-          <div className="flex flex-wrap gap-x-7 gap-y-3">
+          <div className="scrollbar-none -mx-1 flex gap-x-7 gap-y-3 overflow-x-auto px-1 lg:flex-wrap lg:overflow-visible">
             {filters.map((name) => (
               <button
                 key={name}
                 type="button"
                 onClick={() => setFilter(name)}
-                className={`eyebrow pb-1 transition-colors ${
-                  filter === name
-                    ? "border-b border-accent text-accent"
-                    : "hover:text-foreground"
+                className={`eyebrow shrink-0 pb-1 transition-colors duration-500 ${
+                  filter === name ? "text-accent" : "hover:text-foreground"
                 }`}
               >
                 {name}
@@ -89,15 +86,15 @@ function ArchivePage() {
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search title, event or year"
-            className="w-full max-w-xs border-b border-border bg-transparent pb-2 text-sm outline-none placeholder:text-muted-foreground focus:border-accent"
+            placeholder="Search"
+            className="w-full max-w-[14rem] border-b border-border bg-transparent pb-2 text-sm outline-none placeholder:text-muted-foreground focus:border-accent"
             aria-label="Search photographs"
           />
         </div>
       </section>
 
-      <section className="px-6 py-16 md:px-12 md:py-24">
-        <div className="mx-auto max-w-[1600px]">
+      <section className="px-3 py-10 md:px-5 md:py-16">
+        <div className="mx-auto max-w-[1800px]">
           {isLoading ? (
             <p className="eyebrow">Loading archive…</p>
           ) : visible.length === 0 ? (
