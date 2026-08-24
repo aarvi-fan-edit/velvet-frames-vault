@@ -2,57 +2,34 @@ import { Link } from "@tanstack/react-router";
 
 import { ARCHIVE_NAME } from "@/lib/archive";
 
+/** Deliberately quiet: a wordmark, three links, one line of small print. */
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border px-6 py-20 md:px-12">
-      <div className="mx-auto grid max-w-[1600px] gap-14 md:grid-cols-[1.4fr_1fr_1fr]">
-        <div>
-          <p className="font-display text-4xl tracking-[0.3em]">{ARCHIVE_NAME}</p>
-          <p className="mt-6 max-w-sm text-sm leading-relaxed text-muted-foreground">
-            A curated photographic archive. Every frame catalogued by event, date and
-            collection.
-          </p>
-        </div>
+    <footer className="px-6 pb-12 pt-24 md:px-12 md:pb-16 md:pt-32">
+      <div className="mx-auto flex max-w-[1600px] flex-col gap-10 border-t border-border pt-10 md:flex-row md:items-center md:justify-between">
+        <Link to="/" className="font-display text-lg tracking-[0.42em]">
+          {ARCHIVE_NAME}
+        </Link>
 
-        <div>
-          <p className="eyebrow">Navigate</p>
-          <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
-            <li>
-              <Link to="/" className="transition-colors hover:text-foreground">
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link to="/archive" className="transition-colors hover:text-foreground">
-                Archive
-              </Link>
-            </li>
-            <li>
-              <Link to="/about" className="transition-colors hover:text-foreground">
-                About
-              </Link>
-            </li>
-          </ul>
-        </div>
+        <nav className="flex gap-8">
+          {[
+            { to: "/", label: "Home" },
+            { to: "/archive", label: "Archive" },
+            { to: "/about", label: "About" },
+          ].map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className="eyebrow transition-colors hover:text-foreground"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
 
-        <div>
-          <p className="eyebrow">Elsewhere</p>
-          {/* Placeholder links — replace the # with real profiles later. */}
-          <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
-            {["Instagram", "X", "Press enquiries"].map((label) => (
-              <li key={label}>
-                <a href="#" className="transition-colors hover:text-foreground">
-                  {label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      <div className="mx-auto mt-20 flex max-w-[1600px] flex-col gap-3 border-t border-border pt-8 text-xs text-muted-foreground md:flex-row md:items-center md:justify-between">
-        <p>© {new Date().getFullYear()} {ARCHIVE_NAME}. All photographs are rights reserved.</p>
-        <p>Images shown are placeholders for the prototype.</p>
+        <p className="text-xs text-muted-foreground">
+          © {new Date().getFullYear()} {ARCHIVE_NAME} — all rights reserved
+        </p>
       </div>
     </footer>
   );

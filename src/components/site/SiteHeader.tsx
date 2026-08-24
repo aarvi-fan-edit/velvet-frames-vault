@@ -1,90 +1,108 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Menu, X, Search } from "lucide-react";
 
 import { ARCHIVE_NAME } from "@/lib/archive";
 
 const NAV = [
-  { to: "/", label: "Home" },
-  { to: "/archive", label: "Archive" },
-  { to: "/about", label: "About" },
+  { to: "/", label: "Home", index: "01" },
+  { to: "/archive", label: "Archive", index: "02" },
+  { to: "/about", label: "About", index: "03" },
 ] as const;
 
-/** Public site navigation. Transparent over the hero, solid once scrolled. */
-export function SiteHeader() {
+/**
+ * Minimal site chrome: wordmark on the left, MENU on the right.
+ * The menu opens a quiet fullscreen navigation overlay.
+ */
+export function SiteHeader({ solid = false }: { solid?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-40 transition-all duration-500 ${
-        scrolled ? "bg-background/85 backdrop-blur-md border-b border-border" : "bg-transparent"
-      }`}
-    >
-      <div className="mx-auto flex h-20 max-w-[1600px] items-center justify-between px-6 md:px-12">
-        <Link to="/" className="font-display text-2xl tracking-[0.35em] md:text-[1.6rem]">
-          {ARCHIVE_NAME}
-        </Link>
-
-        <nav className="hidden items-center gap-10 md:flex">
-          {NAV.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              className="eyebrow transition-colors hover:text-foreground"
-              activeProps={{ className: "text-foreground" }}
-              activeOptions={{ exact: item.to === "/" }}
-            >
-              {item.label}
-            </Link>
-          ))}
+    <>
+      <header
+        className={`fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter] duration-700 ${
+          (scrolled || solid) && !open ? "bg-background/70 backdrop-blur-md" : "bg-transparent"
+        }`}
+      >
+        <div className="flex h-[4.5rem] items-center justify-between px-6 md:h-24 md:px-12">
           <Link
-            to="/archive"
-            hash="search"
-            className="flex items-center gap-2 eyebrow transition-colors hover:text-foreground"
-            aria-label="Search the archive"
+            to="/"
+            onClick={() => setOpen(false)}
+            className="font-display text-xl leading-none tracking-[0.42em] md:text-2xl"
           >
-            <Search className="h-3.5 w-3.5" />
-            Search
+            {ARCHIVE_NAME}
           </Link>
-        </nav>
 
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          className="eyebrow flex items-center gap-2 md:hidden"
-          aria-expanded={open}
-          aria-label="Toggle menu"
-        >
-          {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-          Menu
-        </button>
-      </div>
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-label={open ? "Close menu" : "Open menu"}
+            className="eyebrow relative z-50 py-2 transition-colors hover:text-foreground"
+          >
+            {open ? "Close" : "Menu"}
+          </button>
+        </div>
+      </header>
 
-      {open && (
-        <nav className="animate-fade border-t border-border bg-background/95 px-6 py-8 backdrop-blur-md md:hidden">
-          <ul className="space-y-6">
-            {[...NAV, { to: "/archive", label: "Search" }].map((item, i) => (
-              <li key={`${item.to}-${i}`}>
+      {/* Fullscreen navigation */}
+      <div
+        className={`fixed inset-0 z-40 bg-background transition-opacity duration-700 ease-out ${
+          open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        }`}
+        aria-hidden={!open}
+      >
+        <nav className="flex h-full flex-col justify-center px-6 md:px-12">
+          <ul className="mx-auto w-full max-w-[1600px]">
+            {NAV.map((item, i) => (
+              <li
+                key={item.to}
+                className="overflow-hidden border-b border-border first:border-t"
+                style={{ transitionDelay: `${120 + i * 80}ms` }}
+              >
                 <Link
                   to={item.to}
                   onClick={() => setOpen(false)}
-                  className="font-display text-3xl"
+                  className={`group flex items-baseline gap-6 py-6 transition-[opacity,transform] duration-700 ease-out md:py-10 ${
+                    open ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+                  }`}
+                  style={{ transitionDelay: `${120 + i * 90}ms` }}
                 >
-                  {item.label}
+                  <span className="eyebrow w-10 shrink-0">{item.index}</span>
+                  <span className="display text-[clamp(2.5rem,9vw,7rem)] transition-colors duration-500 group-hover:text-accent">
+                    {item.label}
+                  </span>
                 </Link>
               </li>
             ))}
           </ul>
+
+          <p
+            className={`mx-auto mt-14 w-full max-w-[1600px] text-xs leading-relaxed text-muted-foreground transition-opacity duration-1000 ${
+              open ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            {ARCHIVE_NAME} — photographic archive
+          </p>
         </nav>
-      )}
-    </header>
+      </div>
+    </>
   );
 }

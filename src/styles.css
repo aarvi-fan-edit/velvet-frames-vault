@@ -184,3 +184,34 @@
     transform: none;
   }
 }
+
+/* --- Cinematic hero motion --------------------------------------------- */
+
+@keyframes archive-kenburns {
+  from {
+    transform: scale(1.06);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@utility animate-kenburns {
+  animation:
+    archive-fade 2s ease both,
+    archive-kenburns 18s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Horizontal filter strip on small screens */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-kenburns {
+    animation: none;
+  }
+}
